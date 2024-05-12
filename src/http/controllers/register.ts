@@ -1,6 +1,7 @@
-import { prisma } from "@/lib/prisma";
+import { PrismaUsersRepository } from "@/repositories/prisma/prisma-users-repository";
+import { UserAlreadyExists } from "@/services/erros/user-already-exists";
+import { RegisterService } from "@/services/register";
 import { FastifyRequest, FastifyReply } from "fastify";
-import { hash } from "bcryptjs";
 import { z } from "zod";
 
 export async function Register(req: FastifyRequest, res: FastifyReply) {
@@ -11,19 +12,17 @@ export async function Register(req: FastifyRequest, res: FastifyReply) {
   });
 
   const { name, email, password } = registerBodyScheme.parse(req.body);
+  try {
+    const prismaUsersRepository = new PrismaUsersRepository();
+    const registerService = new RegisterService(prismaUsersRepository);
 
-  const password_hash = await hash(password, 5);
-  const userWiithSameEmail = await prisma.user.findUnique({
-    where: { email },
-  });
-
-  if (userWiithSameEmail) {
-    return res.status(409).send();
+    await registerService.handleRegister({ name, email, password });
+  } catch (e) {
+    if (e instanceof UserAlreadyExists) {
+      return res.status(409).send({ message: e.message });
+    }
+    throw e;
   }
-
-  await prisma.user.create({
-    data: { name, email, password_hash },
-  });
 
   return res.status(201).send();
 }
