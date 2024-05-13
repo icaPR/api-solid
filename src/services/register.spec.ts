@@ -36,4 +36,16 @@ describe("Register services", () => {
       })
     ).rejects.toBeInstanceOf(UserAlreadyExists);
   });
+  it("should be able to register", async () => {
+    const inMemoryUsersRepository = new InMemoryUsersRepository();
+    const registerService = new RegisterService(inMemoryUsersRepository);
+
+    const { user } = await registerService.handleRegister({
+      name: "test",
+      email: "test@email.com",
+      password: "123456",
+    });
+
+    expect(user.id).toEqual(expect.any(String));
+  });
 });
