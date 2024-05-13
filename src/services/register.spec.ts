@@ -1,14 +1,19 @@
-import { describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 import { RegisterService } from "./register";
 import { compare, hash } from "bcryptjs";
 import { InMemoryUsersRepository } from "@/repositories/in-memory/in-memory-users-repository";
 import { UserAlreadyExists } from "./erros/user-already-exists";
 
-describe("Register services", () => {
-  it("user password must be hashed", async () => {
-    const inMemoryUsersRepository = new InMemoryUsersRepository();
-    const registerService = new RegisterService(inMemoryUsersRepository);
+let inMemoryUsersRepository: InMemoryUsersRepository;
+let registerService: RegisterService;
 
+describe("Register services", () => {
+  beforeEach(() => {
+    inMemoryUsersRepository = new InMemoryUsersRepository();
+    registerService = new RegisterService(inMemoryUsersRepository);
+  });
+
+  it("user password must be hashed", async () => {
     const { user } = await registerService.handleRegister({
       name: "test",
       email: "test@email.com",
@@ -19,16 +24,13 @@ describe("Register services", () => {
     expect(isPasswordHashCorrectly).toBe(true);
   });
   it("should not be possible to register two identical emails", async () => {
-    const inMemoryUsersRepository = new InMemoryUsersRepository();
-    const registerService = new RegisterService(inMemoryUsersRepository);
-
     await registerService.handleRegister({
       name: "test",
       email: "test@email.com",
       password: "123456",
     });
 
-    expect(() =>
+    await expect(() =>
       registerService.handleRegister({
         name: "test",
         email: "test@email.com",
@@ -36,10 +38,8 @@ describe("Register services", () => {
       })
     ).rejects.toBeInstanceOf(UserAlreadyExists);
   });
-  it("should be able to register", async () => {
-    const inMemoryUsersRepository = new InMemoryUsersRepository();
-    const registerService = new RegisterService(inMemoryUsersRepository);
 
+  it("should be able to register", async () => {
     const { user } = await registerService.handleRegister({
       name: "test",
       email: "test@email.com",
