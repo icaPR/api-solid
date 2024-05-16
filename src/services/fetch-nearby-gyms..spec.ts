@@ -14,7 +14,7 @@ describe("Fetch Nearby Gyms services", () => {
     );
   });
 
-  it("should be able to search for gyms", async () => {
+  it("should look for nearby gyms", async () => {
     await inMemoryGymsRepository.create({
       name: "Near",
       description: null,
