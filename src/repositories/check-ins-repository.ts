@@ -8,6 +8,6 @@ export interface CheckInsRepository {
     date: Date
   ): Promise<CheckIn | null>;
   findManyByUserId(userId: string, page: number): Promise<CheckIn[]>;
-  findById(checkInID: string): Promise<CheckIn | null>;
-  caountByUserId(userId: string): Promise<number>;
+  findById(checkInId: string): Promise<CheckIn | null>;
+  countByUserId(userId: string): Promise<number>;
 }

@@ -14,7 +14,7 @@ export class GetUserMetricService {
   async handleGetUserMetric({
     userId,
   }: GetUserMetricServiceProps): Promise<GetUserMetricServiceResponse> {
-    const checkInsCount = await this.checkInsRepository.caountByUserId(userId);
+    const checkInsCount = await this.checkInsRepository.countByUserId(userId);
     return { checkInsCount };
   }
 }
