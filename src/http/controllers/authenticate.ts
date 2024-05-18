@@ -17,13 +17,17 @@ export async function Authenticate(req: FastifyRequest, res: FastifyReply) {
   try {
     const authenticateService = makeAuthenticateService();
 
-    await authenticateService.hanldeAuthenticate({ email, password });
+    const { user } = await authenticateService.hanldeAuthenticate({
+      email,
+      password,
+    });
+    const token = await res.jwtSign({}, { sign: { sub: user.id } });
+
+    return res.status(200).send({ token });
   } catch (e) {
     if (e instanceof InvalidCredentials) {
       return res.status(400).send({ message: e.message });
     }
     throw e;
   }
-
-  return res.status(200).send();
 }
