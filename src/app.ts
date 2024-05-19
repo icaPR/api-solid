@@ -10,6 +10,7 @@ export const app = fastify();
 app.register(fastifyJwt, { secret: env.JWT_SECRET });
 
 app.register(usersRoutes);
+app.register(gymsRoutes);
 
 app.setErrorHandler((e, req, res) => {
   if (e instanceof ZodError) {
