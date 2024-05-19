@@ -1,17 +1,20 @@
 import fastify from "fastify";
-import { appRoutes } from "./http/routes";
+import { usersRoutes } from "./http/controllers/users/routes";
+import { gymsRoutes } from "./http/controllers/gyms/routes";
 import { ZodError } from "zod";
 import { env } from "./env";
 import fastifyJwt from "@fastify/jwt";
+import { checkInsRoutes } from "./http/controllers/check-ins/routes";
 
 export const app = fastify();
 app.register(fastifyJwt, { secret: env.JWT_SECRET });
-app.register(appRoutes);
+
+app.register(usersRoutes);
 
 app.setErrorHandler((e, req, res) => {
   if (e instanceof ZodError) {
     return res
-      .status(404)
+      .status(400)
       .send({ message: "Validatrion error.", issues: e.format() });
   }
 
