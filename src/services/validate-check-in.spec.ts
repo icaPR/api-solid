@@ -7,14 +7,14 @@ import { LateCheckInValidationError } from "./erros/late-check-in-validation-err
 let inMemoryCheckInsRepository: InMemoryCheckInsRepository;
 let validateCheckInService: ValidateCheckInService;
 
-describe("Validade check-in services", () => {
+describe("Validate check-in services", () => {
   beforeEach(async () => {
     inMemoryCheckInsRepository = new InMemoryCheckInsRepository();
     validateCheckInService = new ValidateCheckInService(
       inMemoryCheckInsRepository
     );
   });
-  it("should be able validade the check-in", async () => {
+  it("should be able validate the check-in", async () => {
     const createdCheckIn = await inMemoryCheckInsRepository.create({
       user_id: "user-01",
       gym_id: "gym-01",
@@ -28,14 +28,14 @@ describe("Validade check-in services", () => {
       expect.any(Date)
     );
   });
-  it("should not be able validade an inexistent check-in", async () => {
+  it("should not be able validate an inexistent check-in", async () => {
     await expect(() =>
       validateCheckInService.hanldeValidateCheckIn({
         checkInId: "inexistent",
       })
     ).rejects.toBeInstanceOf(ResourceNotFound);
   });
-  it("should not be able to validade the check-in after 20 minutes of its creation", async () => {
+  it("should not be able to validate the check-in after 20 minutes of its creation", async () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date(2024, 0, 1, 12, 0));
 
